@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
-using System.Text;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoGameCross_PlatformDesktopApplication1;
+namespace MonoGameEvents;
 
 public class KeyboardManager
 {
-    private readonly KeyboardState[] _prevState;
-    private readonly int _debounce;
-    private int _ptr;
-    private readonly ArrayList _handles;
+    private readonly KeyboardState[] prevState;
+    private readonly int debounce;
+    private int ptr;
+    private readonly List<ButtonEvent> handles;
 
     private struct ButtonEvent
     {
@@ -35,38 +34,29 @@ public class KeyboardManager
 
     public KeyboardManager(int debounce = 6)
     {
-        this._debounce = debounce;
-        this._prevState = new KeyboardState[debounce];
-        this._handles = new ArrayList();
+        this.debounce = debounce;
+        this.prevState = new KeyboardState[debounce];
+        this.handles = new List<ButtonEvent>();
     }
     
     public void Update(KeyboardState newState)
     {
-        ++_ptr;
-        _ptr %= _debounce;
-        _prevState[_ptr] = newState;
+        ++ptr;
+        ptr %= debounce;
+        prevState[ptr] = newState;
         
-        foreach(ButtonEvent handle in _handles)
+        foreach(ButtonEvent handle in handles)
         {
             switch (handle.pressType)
             {
                 case PressType.Pressed:
-                    if (IsPressed(handle.key))
-                    {
-                        handle.callback();
-                    }
+                    if (IsPressed(handle.key)) handle.callback();
                     break;
                 case PressType.Held:
-                    if (IsHeld(handle.key))
-                    {
-                        handle.callback();
-                    }
+                    if (IsHeld(handle.key)) handle.callback();
                     break;
                 case PressType.Released:
-                    if (IsReleased(handle.key))
-                    {
-                        handle.callback();
-                    }
+                    if (IsReleased(handle.key)) handle.callback();
                     break;
             }
         }
@@ -75,26 +65,19 @@ public class KeyboardManager
     private int FramesPressed(Keys key)
     {
         var acc = 0;
-        for (var i = 0; i < _debounce; i++)
+        for (var i = 0; i < debounce; i++)
         {
-            if (_prevState[i].IsKeyDown(key))
+            if (prevState[i].IsKeyDown(key))
             {
                 acc++;
             }
         }
-
         return acc;
     }
 
     private KeyboardState GetState(int prev)
     {
-        // Console.Write(_ptr);
-        // Console.Write(", ");
-        // Console.Write(prev);
-        // Console.Write(", ");
-        // Console.Write((_ptr - prev + _debounce) % _debounce);
-        // Console.WriteLine();
-        return _prevState[(_ptr - prev + _debounce) % _debounce];
+        return prevState[(ptr - prev + debounce) % debounce];
     }
 
     private KeyboardState GetState()
@@ -110,7 +93,7 @@ public class KeyboardManager
     private bool IsHeld(Keys key, int threshold = 2)
     {
         if (GetState().IsKeyUp(key)) return false;
-        for (var i = 1; i < _debounce; i++)
+        for (var i = 1; i < debounce; i++)
         {
             if (i >= threshold) { return true; }
             if (GetState(i).IsKeyUp(key)) { return false; }
@@ -140,16 +123,6 @@ public class KeyboardManager
 
     private void AddCallback(Keys key, Action callback, PressType pressType)
     {
-        _handles.Insert(0, new ButtonEvent(key, callback, pressType));
-    }
-
-    public String StateString(Keys key)
-    {
-        var s = new StringBuilder();
-        for (var i = 0; i < _debounce; i++)
-        {
-            s.Append(GetState(i).IsKeyDown(key) ? "|" : "_");
-        }
-        return s.ToString();
+        handles.Insert(0, new ButtonEvent(key, callback, pressType));
     }
 }

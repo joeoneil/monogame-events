@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoGameCross_PlatformDesktopApplication1;
+namespace MonoGameEvents;
 
 public class ButtonManager
 {
-    private static List<Button> _buttons = new List<Button>();
+    private static readonly List<Button> buttons = new List<Button>();
 
     public static void AddButton(Button b)
     {
-        _buttons.Add(b);
+        buttons.Add(b);
     }
 
     public static void Update(MouseState state)
     {
-        foreach (var b in _buttons)
+        foreach (var b in buttons)
         {
             if (b.Contains(state.Position))
             {

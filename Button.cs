@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace MonoGameCross_PlatformDesktopApplication1;
+namespace MonoGameEvents;
 public class Button
 {
     private readonly Rectangle rect;
