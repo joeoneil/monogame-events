@@ -41,7 +41,7 @@ public class GamepadManager {
         ptr %= debounce;
         prevState[ptr] = newState;
 
-        foreach (var handle in handles) {
+        foreach (ButtonEvent handle in handles) {
             switch (handle.pressType) {
                 case PressType.Held:
                     if (IsHeld(handle.button) ^ handle.invert) handle.callback();
