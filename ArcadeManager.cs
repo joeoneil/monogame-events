@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonoGameEvents;
 
+[Obsolete("Use MonoGameEvents.InputManager instead")]
 public class ArcadeManager {
     private readonly GamePadState[] prevState;
     private readonly int debounce;

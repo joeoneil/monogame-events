@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonoGameEvents;
 
+[Obsolete("Use MonoGameEvents.InputManager instead")]
 public class KeyboardManager {
     private readonly KeyboardState[] prevState;
     private readonly int debounce;
